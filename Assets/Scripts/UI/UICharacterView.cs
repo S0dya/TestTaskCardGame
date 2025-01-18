@@ -10,19 +10,25 @@ public class UICharacterView : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI characterName;
     [SerializeField] private Image characterImage;
-
+    [Space(20)]
     [SerializeField] private TextMeshProUGUI characterHealthPoints;
     [SerializeField] private Image characterHealthBarImage;
-
+    [Space(20)]
+    [SerializeField] private GameObject shieldObject;
     [SerializeField] private TextMeshProUGUI characterShieldPoints;
+
+    private void Awake()
+    {
+        shieldObject.SetActive(false);
+    }
 
     public void SetCharacter(string name, Sprite sprite, int healthPoints, int shieldPoints)
     {
         characterName.text = name;
         characterImage.sprite = sprite;
 
-        characterHealthPoints.text = healthPoints.ToString();
-        characterShieldPoints.text = shieldPoints.ToString();
+        SetHealth(healthPoints, healthPoints);
+        if (shieldPoints > 0) SetShield(0, shieldPoints);
     }
     
     public void SetShield(int prevValue, int newValue)
@@ -31,11 +37,11 @@ public class UICharacterView : MonoBehaviour
 
         if (prevValue == 0 && newValue > 0)
         {
-            //show
+            shieldObject.SetActive(true);
         }
         else if (prevValue > 0 && newValue == 0)
         {
-            //remove
+            shieldObject.SetActive(false);
         }
 
         SetText(characterShieldPoints, newValue.ToString());
@@ -43,11 +49,20 @@ public class UICharacterView : MonoBehaviour
 
     public void SetHealth(int prevValue, int newValue, int maxValue)
     {
+        if (prevValue > newValue)
+        {
+            //play effects
+        }
+
+        SetHealth(newValue, maxValue);
+    }
+    public void SetHealth(int newValue, int maxValue)
+    {
         if (newValue < 0) DebugManager.Log(DebugCategory.Gameplay, $"{newValue} must be positive", DebugStatus.Error);
 
         characterHealthBarImage.fillAmount = newValue / maxValue;
 
-        SetText(characterHealthPoints, newValue.ToString());
+        SetText(characterHealthPoints, $"{newValue} / {maxValue}");
     }
 
 

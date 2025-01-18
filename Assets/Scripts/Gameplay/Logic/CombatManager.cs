@@ -29,7 +29,11 @@ namespace Game.Combat
             for (int i = 0; i < enemyInfos.Length; i++)
             {
                 _enemyModels.Add(new CharacterModel(enemyInfos[i].HealthPoints, enemyInfos[i].ShieldPoints));
-                enemyViews[i].SetCharacter(enemyInfos[i].name, enemyInfos[i].Sprite, enemyInfos[i].HealthPoints, enemyInfos[i].ShieldPoints);
+                enemyViews[i].SetCharacter(
+                    enemyInfos[i].name, 
+                    enemyInfos[i].Sprite, 
+                    enemyInfos[i].HealthPoints, 
+                    enemyInfos[i].ShieldPoints);
             }
         }
 
@@ -48,6 +52,8 @@ namespace Game.Combat
 
             if (_enemyModels[enemyIndex].HealthPoints == 0)
             {
+                _enemyModels.RemoveAt(enemyIndex);
+
                 //handle death
             }
         }

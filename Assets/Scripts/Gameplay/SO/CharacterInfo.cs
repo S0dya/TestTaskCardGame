@@ -1,14 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
-[System.Serializable]
-[CreateAssetMenu(menuName = "Game/Character")]
+[Serializable]
 public class CharacterInfo : ScriptableObject
 {
     [SerializeField] private string characterName;
     [SerializeField] private Sprite sprite;
 
+    [Space(10)]
     [SerializeField] private int healthPoints;
     [SerializeField] private int shieldPoints;
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b51529bd5973047b984527814e0ab5, type: 3}
   m_Name: TestEnemy
   m_EditorClassIdentifier: 
-  characterName: Ghoul
+  characterName: Enemy
   sprite: {fileID: 21300000, guid: 2967c35248f9fbb488410fb8864b1d5e, type: 3}
   healthPoints: 20
   shieldPoints: 0

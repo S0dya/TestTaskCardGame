@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 913e7cdd480ed0848ae23216702df77d, type: 3}
+  m_Name: TestBundle
+  m_EditorClassIdentifier: 
+  cardInfos:
+  - {fileID: 11400000, guid: 71e2f5dbc6dd6224ba9fcf803bc49228, type: 2}
+  - {fileID: 11400000, guid: 4c5def1ecc92e3e4bb75d7da3ae413d2, type: 2}
+  - {fileID: 11400000, guid: 28ffd138489d0394e90fdc5ebce741dd, type: 2}
+  - {fileID: 11400000, guid: 71e2f5dbc6dd6224ba9fcf803bc49228, type: 2}
+  - {fileID: 11400000, guid: 4c5def1ecc92e3e4bb75d7da3ae413d2, type: 2}
+  - {fileID: 11400000, guid: 28ffd138489d0394e90fdc5ebce741dd, type: 2}
+  - {fileID: 11400000, guid: 71e2f5dbc6dd6224ba9fcf803bc49228, type: 2}
+  - {fileID: 11400000, guid: 4c5def1ecc92e3e4bb75d7da3ae413d2, type: 2}
+  - {fileID: 11400000, guid: 28ffd138489d0394e90fdc5ebce741dd, type: 2}

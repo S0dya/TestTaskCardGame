@@ -2,72 +2,112 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.U2D;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UICharacterView : MonoBehaviour
+namespace Game.Character
 {
-
-    [SerializeField] private TextMeshProUGUI characterName;
-    [SerializeField] private Image characterImage;
-    [Space(20)]
-    [SerializeField] private TextMeshProUGUI characterHealthPoints;
-    [SerializeField] private Image characterHealthBarImage;
-    [Space(20)]
-    [SerializeField] private GameObject shieldObject;
-    [SerializeField] private TextMeshProUGUI characterShieldPoints;
-
-    private void Awake()
+    public class UICharacterView : MonoBehaviour
     {
-        shieldObject.SetActive(false);
-    }
+        [SerializeField] private GameObject mainObject;
 
-    public void SetCharacter(string name, Sprite sprite, int healthPoints, int shieldPoints)
-    {
-        characterName.text = name;
-        characterImage.sprite = sprite;
+        [Space(20)]
+        [SerializeField] private TextMeshProUGUI characterName;
+        [SerializeField] private Image characterImage;
 
-        SetHealth(healthPoints, healthPoints);
-        if (shieldPoints > 0) SetShield(0, shieldPoints);
-    }
-    
-    public void SetShield(int prevValue, int newValue)
-    {
-        if (newValue < 0) DebugManager.Log(DebugCategory.Gameplay, $"{newValue} must be positive", DebugStatus.Error);
+        [Space(20)]
+        [SerializeField] private TextMeshProUGUI characterHealthPoints;
+        [SerializeField] private Image characterHealthBarImage;
 
-        if (prevValue == 0 && newValue > 0)
+        [Space(20)]
+        [SerializeField] private GameObject shieldObject;
+        [SerializeField] private TextMeshProUGUI characterShieldPoints;
+
+        [Header("Details")]
+        [SerializeField] private CanvasGroup detailsCanvasGroup;
+
+        [Space(10)]
+        [Header("Action")]
+        [SerializeField] private CanvasGroup actionCanvasGroup;
+        [SerializeField] private EventTrigger actionEventTrigger;
+
+        private void Awake()
         {
-            shieldObject.SetActive(true);
-        }
-        else if (prevValue > 0 && newValue == 0)
-        {
+            mainObject.SetActive(false);
+
             shieldObject.SetActive(false);
+
+            detailsCanvasGroup.alpha = 0f;
+            ToggleAction(false);
         }
 
-        SetText(characterShieldPoints, newValue.ToString());
-    }
-
-    public void SetHealth(int prevValue, int newValue, int maxValue)
-    {
-        if (prevValue > newValue)
+        public void Init()
         {
-            //play effects
+
         }
 
-        SetHealth(newValue, maxValue);
-    }
-    public void SetHealth(int newValue, int maxValue)
-    {
-        if (newValue < 0) DebugManager.Log(DebugCategory.Gameplay, $"{newValue} must be positive", DebugStatus.Error);
+        public virtual void SetCharacter(string name, Sprite sprite, int healthPoints, int shieldPoints)
+        {
+            characterName.text = name;
+            characterImage.sprite = sprite;
 
-        characterHealthBarImage.fillAmount = newValue / maxValue;
+            SetHealth(healthPoints, healthPoints);
+            if (shieldPoints > 0) SetShield(0, shieldPoints);
 
-        SetText(characterHealthPoints, $"{newValue} / {maxValue}");
-    }
+            mainObject.SetActive(true);
+        }
 
+        public void OnDetailsPointerEnter()
+        {
+            detailsCanvasGroup.alpha = 1;
+        }
+        public void OnDetailsPointerExit()
+        {
+            detailsCanvasGroup.alpha = 0;
+        }
 
-    private void SetText(TextMeshProUGUI tmp, string text)
-    {
-        tmp.text = text;
+        public void OnActionPointerEnter()
+        {
+            actionCanvasGroup.alpha = 1;
+        }
+        public void OnActionPointerExit()
+        {
+            actionCanvasGroup.alpha = 0;
+        }
+
+        public void SetShield(int prevValue, int newValue)
+        {
+            if (prevValue == 0 && newValue > 0)
+            {
+                shieldObject.SetActive(true);
+            }
+            else if (prevValue > 0 && newValue == 0)
+            {
+                shieldObject.SetActive(false);
+            }
+
+            Helper.SetText(characterShieldPoints, newValue.ToString());
+        }
+
+        public void SetHealth(int prevValue, int newValue, int maxValue)
+        {
+            if (prevValue > newValue)
+            {
+                //play effects
+            }
+
+            SetHealth(newValue, maxValue);
+        }
+        public void SetHealth(int newValue, int maxValue)
+        {
+            characterHealthBarImage.fillAmount = newValue / maxValue;
+
+            Helper.SetText(characterHealthPoints, $"{newValue} / {maxValue}");
+        }
+
+        public void ToggleAction(bool toggle)
+        {
+            actionCanvasGroup.alpha = toggle ? 1 : 0; actionCanvasGroup.blocksRaycasts = toggle;
+        }
     }
 }

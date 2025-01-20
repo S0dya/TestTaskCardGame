@@ -1,4 +1,5 @@
 using events;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,30 +21,29 @@ namespace Game.Card
 
         public bool IsActive => mainObject.activeSelf;
 
-        private void Awake()
-        {
-            mainObject.SetActive(false);
-        }
-
-
-        public void SetCard(string name, Sprite sprite, string description, int energyNeeded)
+        public void SetCard(string name, Sprite sprite, string description, string energyNeeded)
         {
             cardName.text = name;
             cardImage.sprite = sprite;
             this.description.text = description;
             
-            this.energyNeeded.text = energyNeeded.ToString();
+            this.energyNeeded.text = energyNeeded;
 
-            mainObject.SetActive(false);
+            ToggleCard(true);
         }
 
         public void ResetCard()
         {
-            mainObject.SetActive(false);
+            ToggleCard(false);
+        }
+
+        public void MoveToParent(RectTransform parent)
+        {
+            mainObject.transform.SetParent(parent);
         }
 
         //public void ToggleEnergySatisfied(bool toggle)
 
-        public void ToggleCard(bool toggle) => mainObject.SetActive(toggle);
+        private void ToggleCard(bool toggle) => mainObject.SetActive(toggle);
     }
 }

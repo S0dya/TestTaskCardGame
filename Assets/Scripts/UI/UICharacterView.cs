@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -41,9 +42,14 @@ namespace Game.Character
             ToggleAction(false);
         }
 
-        public void Init()
+        public void Init(Action OnPointerUpAction)
         {
-
+            var pointerUpEntry = new EventTrigger.Entry
+            {
+                eventID = EventTriggerType.PointerUp
+            };
+            pointerUpEntry.callback.AddListener(_ => OnPointerUpAction?.Invoke());
+            actionEventTrigger.triggers.Add(pointerUpEntry);
         }
 
         public virtual void SetCharacter(string name, Sprite sprite, int healthPoints, int shieldPoints)

@@ -1,3 +1,5 @@
+using ObserverPattern;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,6 +27,16 @@ namespace Game.Character
                     playerInfo.ShieldPoints);
         }
 
+        public void InitActions(Action OnPointerUpActionPlayer, Action<int> OnPointerUpActionEnemy)
+        {
+            playerView.Init(OnPointerUpActionPlayer);
+
+            for (int i = 0; i < enemyViews.Length; i++)
+            {
+                enemyViews[i].Init(() => OnPointerUpActionEnemy.Invoke(i));
+            }
+        }
+
         public void SetEnemies(CharacterInfo[] enemyInfos)
         {
             for (int i = 0; i < enemyInfos.Length; i++)
@@ -38,10 +50,26 @@ namespace Game.Character
             }
         }
 
-        public void OnCardDragged()
+        public void OnCardDragged(ActionEffectEnum actionEffect)
         {
-            //switch ()
-                //ToggleAction(true);
+            switch (actionEffect)
+            {
+                case ActionEffectEnum.DealDamage:
+                    foreach (var enemyView in enemyViews)
+                    {
+                        enemyView.ToggleAction(true);
+                    }
+                    break;
+
+                case ActionEffectEnum.AddShield:
+                case ActionEffectEnum.RestoreHealth:
+                    playerView.ToggleAction(true);
+                    break;
+
+                case ActionEffectEnum.none: 
+                    DebugManager.Log(DebugCategory.Gameplay, "None action effect", DebugStatus.Error);
+                    break;
+            }
         }
         public void UseCard(int energyUsed)
         {
@@ -68,7 +96,7 @@ namespace Game.Character
 
                 if (_enemyModels.Count == 0)
                 {
-                    //obs
+                    Observer.OnHandleEvent(EventEnum.CombatFightEnded);
                 }
 
                 //handle death

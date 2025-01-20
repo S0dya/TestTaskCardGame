@@ -1,6 +1,7 @@
 using config;
 using events;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class CardWrapper : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler,
@@ -24,6 +25,12 @@ public class CardWrapper : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private Vector2 dragStartPos;
     public EventsConfig eventsConfig;
     public bool preventCardInteraction;
+
+    [SerializeField]
+    public UnityEvent OnCardPointerDown;
+
+    [SerializeField]
+    public UnityEvent OnCardPointerUp;
 
     public float width {
         get => rectTransform.rect.width * rectTransform.localScale.x;
@@ -138,10 +145,12 @@ public class CardWrapper : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             transform.position.y - eventData.position.y);
         container.OnCardDragStart(this);
         eventsConfig?.OnCardUnhover?.Invoke(new CardUnhover(this));
+        OnCardPointerDown?.Invoke();
     }
 
     public void OnPointerUp(PointerEventData eventData) {
         isDragged = false;
         container.OnCardDragEnd();
+        OnCardPointerUp?.Invoke();
     }
 }

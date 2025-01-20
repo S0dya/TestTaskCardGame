@@ -1,4 +1,4 @@
-using System.Linq;
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -12,14 +12,33 @@ namespace Game.Card
         [SerializeField] private TextMeshProUGUI drawPileAmount;
         [SerializeField] private TextMeshProUGUI discardPileAmount;
 
-        public void AddCard(CardModel cardModel)
+        [Space(20)]
+        [SerializeField] private RectTransform handCardsParent;
+        [SerializeField] private RectTransform pileCardsParent;
+
+        private void Awake()
         {
-            GetFreeCardView().SetCard(cardModel);
+            foreach (var cardView in cardViews)
+            {
+                cardView.ResetCard();
+                cardView.MoveToParent(pileCardsParent);
+            }
+        }
+
+        public int AddCard(string name, Sprite sprite, string description, string energyNeeded)
+        {
+            int cardViewIndex = GetFreeCardViewIndex();
+
+            cardViews[cardViewIndex].SetCard(name, sprite, description, energyNeeded);
+            cardViews[cardViewIndex].MoveToParent(handCardsParent);
+
+            return cardViewIndex;
         }
 
         public void RemoveCard(int index)
         {
             cardViews[index].ResetCard();
+            cardViews[index].MoveToParent(pileCardsParent);
         }
 
         public void SetDrawPile(int value)
@@ -31,8 +50,19 @@ namespace Game.Card
             Helper.SetText(discardPileAmount, value.ToString());
         }
 
-        public bool HasFreeCardView() => GetFreeCardView() != null;
+        public bool HasFreeCardView() => GetFreeCardViewIndex() > -1;
 
-        private UICardView GetFreeCardView() => cardViews.FirstOrDefault(x => !x.IsActive);
+        private int GetFreeCardViewIndex()
+        {
+            for (int i = 0; cardViews.Length > 0; i++)
+            {
+                if (!cardViews[i].IsActive)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
     }
 }

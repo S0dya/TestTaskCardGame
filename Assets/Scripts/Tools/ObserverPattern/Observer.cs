@@ -1,7 +1,13 @@
 
 public enum EventEnum
 {
+    CombatFightStarted,
+    CombatFightEnded,
+    
+    CombatPlayerTurnStarted,
+    CombatPlayerTurnEnded,
 
+    CombatEnemyTurnStarted,
 }
 
 namespace ObserverPattern

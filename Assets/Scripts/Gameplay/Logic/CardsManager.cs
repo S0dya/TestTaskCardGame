@@ -35,19 +35,21 @@ namespace Game.Card
 
         public void OnCardPointerDown(int i)
         {
-            DebugManager.Log(DebugCategory.Points, "pointer down on card");
+            DebugManager.Log(DebugCategory.UI, "pointer down on card");
 
             _currentDraggedCardIndex = i;
 
             CardModel card = _deckModel.GetCard(_currentDraggedCardIndex);
 
-            charactersManager.OnCardDragged(card.ActionEffect); //change later
+            charactersManager.EnableActionForCard(card.ActionEffect);
         }
         public void OnCardPointerUp()
         {
-            DebugManager.Log(DebugCategory.Points, "pointer up on card");
+            DebugManager.Log(DebugCategory.UI, "pointer up on card");
 
-            _currentDraggedCardIndex = -1;
+            charactersManager.DisableAction();
+
+            //_currentDraggedCardIndex = -1;
         }
 
         public void AddCard(CardInfo cardInfo)
@@ -87,19 +89,29 @@ namespace Game.Card
 
             if (charactersManager.GetPlayerEnergy() < card.EnergyNeeded) return;
 
-            DebugManager.Log(DebugCategory.Points, "used card on player");
+            DebugManager.Log(DebugCategory.UI, "used card on player");
 
             _deckModel.DiscardCard(card);
 
-            //charactersManager.UseCard(card.);
+            charactersManager.UseCard(card.EnergyNeeded, card.ActionEffect, card.Value);
         }
-        private void OnPointerUpActionEnemy(int i)
+        private void OnPointerUpActionEnemy(int i)//        CHANGE 
         {
-            DebugManager.Log(DebugCategory.Points, "used card on enemy");
+            CardModel card = _deckModel.GetCard(_currentDraggedCardIndex);
+
+            if (charactersManager.GetPlayerEnergy() < card.EnergyNeeded) return;
+
+            DebugManager.Log(DebugCategory.UI, "used card on enemy");
+
+            _deckModel.DiscardCard(card);
+
+            charactersManager.UseCard(card.EnergyNeeded, card.ActionEffect, card.Value, i);
         }
 
         private void OnPlayerTurnStarted()
         {
+            _deckModel.ShuffleDrawPile();
+
             if (_drawCardsCoroutine != null) StopCoroutine(_drawCardsCoroutine);
             _drawCardsCoroutine = StartCoroutine(DrawCardsCoroutine());
         }

@@ -137,7 +137,6 @@ MonoBehaviour:
   characterShieldPoints: {fileID: 1389259664127793657}
   detailsCanvasGroup: {fileID: 818945935849537131}
   actionCanvasGroup: {fileID: 906746213192523865}
-  actionEventTrigger: {fileID: 3383576532270338297}
 --- !u!1 &2322688511832984033
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +152,7 @@ GameObject:
   - component: {fileID: 906746213192523865}
   m_Layer: 0
   m_Name: Action
-  m_TagString: Untagged
+  m_TagString: card action test
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

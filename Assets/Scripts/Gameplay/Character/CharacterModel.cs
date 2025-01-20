@@ -18,10 +18,14 @@ namespace Game.Character
         private int _healthPoints;
         private int _shieldPoints;
 
-        public CharacterModel(int healthPoints, int shieldPoints)
+        protected Action _deathAction;
+
+        public CharacterModel(int healthPoints, int shieldPoints, Action deathAction)
         {
             _maxHealthPoints = _healthPoints = healthPoints;
             _shieldPoints = shieldPoints;
+
+            _deathAction = deathAction;
         }
 
         public virtual void OnTurnEnded()
@@ -37,14 +41,24 @@ namespace Game.Character
 
             _shieldPoints = Math.Max(0, _shieldPoints - damage);
         }
+        public void SetShield(int value)
+        {
+            if (value < 0) DebugManager.Log(DebugCategory.Gameplay, $"{value} must be a positive value", DebugStatus.Error);
+
+            _shieldPoints += value;
+        }
 
         public void DealDamage(int damage)
         {
             if (damage < 0) DebugManager.Log(DebugCategory.Gameplay, $"{damage} must be a positive value", DebugStatus.Error);
 
             _healthPoints = Math.Max(0, _healthPoints - damage);
-        }
 
+            if (_healthPoints == 0)
+            {
+                _deathAction?.Invoke();
+            }
+        }
         public void RestoreHealth(int value)
         {
             if (value < 0) DebugManager.Log(DebugCategory.Gameplay, $"{value} must be a positive value", DebugStatus.Error);

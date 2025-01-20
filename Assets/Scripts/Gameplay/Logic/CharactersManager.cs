@@ -2,6 +2,7 @@ using ObserverPattern;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Game.Character
 {
@@ -11,20 +12,26 @@ namespace Game.Character
         [SerializeField] private PlayerCharacterInfo playerInfo;
 
         [Space(30)]
-        [SerializeField] private UICharacterView playerView;
+        [SerializeField] private UIPlayerCharacterView playerView;
         [SerializeField] private UICharacterView[] enemyViews;
 
         private PlayerCharacterModel _playerModel;
-        private List<CharacterModel> _enemyModels = new List<CharacterModel>();
+        private List<EnemyCharacterModel> _enemyModels = new List<EnemyCharacterModel>();
 
         private void Start()
         {
-            _playerModel = new PlayerCharacterModel(playerInfo.EnergyPoints, playerInfo.HealthPoints, playerInfo.ShieldPoints);
+            _playerModel = new PlayerCharacterModel(
+                playerInfo.EnergyPoints,
+                playerInfo.HealthPoints,
+                playerInfo.ShieldPoints,
+                OnPlayerDeath); 
+
             playerView.SetCharacter(
                     playerInfo.CharacterName,
                     playerInfo.Sprite,
                     playerInfo.HealthPoints,
-                    playerInfo.ShieldPoints);
+                    playerInfo.ShieldPoints,
+                    playerInfo.EnergyPoints);
         }
 
         public void InitActions(Action OnPointerUpActionPlayer, Action<int> OnPointerUpActionEnemy)
@@ -33,7 +40,9 @@ namespace Game.Character
 
             for (int i = 0; i < enemyViews.Length; i++)
             {
-                enemyViews[i].Init(() => OnPointerUpActionEnemy.Invoke(i));
+                int index = i;
+
+                enemyViews[i].Init(() => OnPointerUpActionEnemy.Invoke(index));
             }
         }
 
@@ -41,7 +50,11 @@ namespace Game.Character
         {
             for (int i = 0; i < enemyInfos.Length; i++)
             {
-                _enemyModels.Add(new CharacterModel(enemyInfos[i].HealthPoints, enemyInfos[i].ShieldPoints));
+                _enemyModels.Add(new EnemyCharacterModel(
+                    enemyInfos[i].HealthPoints, 
+                    enemyInfos[i].ShieldPoints, 
+                    OnEnemyDeath));
+
                 enemyViews[i].SetCharacter(
                     enemyInfos[i].CharacterName,
                     enemyInfos[i].Sprite,
@@ -50,7 +63,7 @@ namespace Game.Character
             }
         }
 
-        public void OnCardDragged(ActionEffectEnum actionEffect)
+        public void EnableActionForCard(ActionEffectEnum actionEffect)
         {
             switch (actionEffect)
             {
@@ -71,39 +84,72 @@ namespace Game.Character
                     break;
             }
         }
-        public void UseCard(int energyUsed)
+        public void DisableAction()
+        {
+            playerView.ToggleAction(false);
+            foreach (var enemyView in enemyViews) enemyView.ToggleAction(false);
+        }
+
+        public void UseCard(int energyUsed, ActionEffectEnum actionEffect, int value)
         {
             _playerModel.UseEnergy(energyUsed);
+            playerView.SetEnergy(_playerModel.EnergyPoints, _playerModel.MaxEnergyPoints);
+
+            UseActionEffect(_playerModel, playerView, actionEffect, value);
         }
-
-
-        public void DealDamageToPlayer(int damage)
+        public void UseCard(int energyUsed, ActionEffectEnum actionEffect, int value, int enemyIndex)
         {
-            DealDamage(_playerModel, playerView, damage);
+            _playerModel.UseEnergy(energyUsed);
+            playerView.SetEnergy(_playerModel.EnergyPoints, _playerModel.MaxEnergyPoints);
 
-            if (_playerModel.HealthPoints == 0)
-            {
-                //handle death
-            }
-        }
-        public void DealDamageToEnemy(int damage, int enemyIndex)
-        {
-            DealDamage(_enemyModels[enemyIndex], enemyViews[enemyIndex], damage);
+            Debug.Log(enemyIndex + " enemy");
 
-            if (_enemyModels[enemyIndex].HealthPoints == 0)
-            {
-                _enemyModels.RemoveAt(enemyIndex);
-
-                if (_enemyModels.Count == 0)
-                {
-                    Observer.OnHandleEvent(EventEnum.CombatFightEnded);
-                }
-
-                //handle death
-            }
+            UseActionEffect(_enemyModels[enemyIndex], enemyViews[enemyIndex], actionEffect, value);
         }
 
         public int GetPlayerEnergy() => _playerModel.EnergyPoints;
+
+        private void UseActionEffect(CharacterModel characterModel, UICharacterView characterView, ActionEffectEnum actionEffect, int value)
+        {
+            switch (actionEffect)
+            {
+                case ActionEffectEnum.DealDamage:
+                    DealDamage(characterModel, characterView, value);
+                    break;
+                case ActionEffectEnum.AddShield:
+                    AddShield(characterModel, characterView, value);
+                    break;
+                case ActionEffectEnum.RestoreHealth:
+                    RestoreHealth(characterModel, characterView, value);
+                    break;
+
+                case ActionEffectEnum.none:
+                    DebugManager.Log(DebugCategory.Gameplay, "None action effect", DebugStatus.Error);
+                    break;
+            }
+        }
+
+        private void OnPlayerDeath()
+        {
+            DebugManager.Log(DebugCategory.Points, "Player died");
+        }
+
+        private void OnEnemyDeath(EnemyCharacterModel enemyModel)
+        {
+            DebugManager.Log(DebugCategory.Points, "Enemy died");
+
+            int enemyIndex = _enemyModels.IndexOf(enemyModel);
+            _enemyModels.RemoveAt(enemyIndex);
+            enemyViews[enemyIndex].ResetCharacter();
+
+            if (_enemyModels.Count == 0)
+            {
+                Observer.OnHandleEvent(EventEnum.CombatFightEnded);
+            }
+
+            //handle death
+        }
+
 
         private void DealDamage(CharacterModel characterModel, UICharacterView characterView, int startDamage)
         {
@@ -121,6 +167,24 @@ namespace Game.Character
 
                 characterView.SetHealth(prevHealthPoints, characterModel.HealthPoints, characterModel.MaxHealthPoints);
             }
+        }
+
+        private void AddShield(CharacterModel characterModel, UICharacterView characterView, int value)
+        {
+            var prevShieldPoints = characterModel.ShieldPoints;
+
+            characterModel.SetShield(value);
+
+            characterView.SetShield(prevShieldPoints, characterModel.ShieldPoints);
+        }
+
+        private void RestoreHealth(CharacterModel characterModel, UICharacterView characterView, int value)
+        {
+            var prevHealthPoints = characterModel.HealthPoints;
+
+            characterModel.RestoreHealth(value);
+
+            characterView.SetHealth(prevHealthPoints, characterModel.HealthPoints);
         }
     }
 }

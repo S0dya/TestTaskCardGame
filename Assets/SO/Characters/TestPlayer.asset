@@ -16,4 +16,4 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 774ecdfacc3111e429903a4faf834ce8, type: 3}
   healthPoints: 80
   shieldPoints: 0
-  energyPoints: 4
+  energyPoints: 3

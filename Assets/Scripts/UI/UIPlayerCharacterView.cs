@@ -8,21 +8,16 @@ namespace Game.Character
         [Space(10)]
         [SerializeField] private TextMeshProUGUI energyText;
 
-        public override void SetCharacter(string name, Sprite sprite, int healthPoints, int shieldPoints)
+        public void SetCharacter(string name, Sprite sprite, int healthPoints, int shieldPoints, int energyPoints)
         {
-            base.SetCharacter(name, sprite, healthPoints, shieldPoints);
+            SetCharacter(name, sprite, healthPoints, shieldPoints);
 
-
+            SetEnergy(energyPoints, energyPoints);
         }
 
         public void SetEnergy(int energy, int maxEnergy)
         {
-            Helper.SetText(energyText, $"{energy} / {maxEnergy}");
-
-            //if (energy == 0)
-            //{
-            //    //red outline, stop effect
-            //}
+            Helper.SetText(energyText, $"{energy}/{maxEnergy}");
         }
     }
 }

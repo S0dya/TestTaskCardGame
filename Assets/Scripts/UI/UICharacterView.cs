@@ -30,7 +30,10 @@ namespace Game.Character
         [Space(10)]
         [Header("Action")]
         [SerializeField] private CanvasGroup actionCanvasGroup;
-        [SerializeField] private EventTrigger actionEventTrigger;
+
+        public CanvasGroup ActionCanvasGroup => actionCanvasGroup;
+
+        private Action _onPointerUpAction;
 
         private void Awake()
         {
@@ -42,14 +45,9 @@ namespace Game.Character
             ToggleAction(false);
         }
 
-        public void Init(Action OnPointerUpAction)
+        public void Init(Action onPointerUpAction)
         {
-            var pointerUpEntry = new EventTrigger.Entry
-            {
-                eventID = EventTriggerType.PointerUp
-            };
-            pointerUpEntry.callback.AddListener(_ => OnPointerUpAction?.Invoke());
-            actionEventTrigger.triggers.Add(pointerUpEntry);
+            _onPointerUpAction = onPointerUpAction;
         }
 
         public virtual void SetCharacter(string name, Sprite sprite, int healthPoints, int shieldPoints)
@@ -62,6 +60,10 @@ namespace Game.Character
 
             mainObject.SetActive(true);
         }
+        public void ResetCharacter()
+        {
+            mainObject.SetActive(false);
+        }
 
         public void OnDetailsPointerEnter()
         {
@@ -72,13 +74,9 @@ namespace Game.Character
             detailsCanvasGroup.alpha = 0;
         }
 
-        public void OnActionPointerEnter()
+        public void OnActionPointerUp()
         {
-            actionCanvasGroup.alpha = 1;
-        }
-        public void OnActionPointerExit()
-        {
-            actionCanvasGroup.alpha = 0;
+            _onPointerUpAction.Invoke();
         }
 
         public void SetShield(int prevValue, int newValue)
@@ -99,14 +97,14 @@ namespace Game.Character
         {
             if (prevValue > newValue)
             {
-                //play effects
+                //play effect
             }
 
             SetHealth(newValue, maxValue);
         }
         public void SetHealth(int newValue, int maxValue)
         {
-            characterHealthBarImage.fillAmount = newValue / maxValue;
+            characterHealthBarImage.fillAmount = (float)newValue / (float)maxValue;
 
             Helper.SetText(characterHealthPoints, $"{newValue} / {maxValue}");
         }

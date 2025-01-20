@@ -87,9 +87,9 @@ public class CardContainer : MonoBehaviour {
         cards.Clear();
         foreach (Transform card in transform) {
             var wrapper = card.GetComponent<CardWrapper>();
-            if (wrapper == null) {
-                wrapper = card.gameObject.AddComponent<CardWrapper>();
-            }
+            //if (wrapper == null) {
+            //    wrapper = card.gameObject.AddComponent<CardWrapper>();
+            //}
 
             cards.Add(wrapper);
 

@@ -1,5 +1,6 @@
 using System;
 
+
 namespace Game.Character
 {
     public class PlayerCharacterModel : CharacterModel
@@ -11,8 +12,8 @@ namespace Game.Character
 
         private int _energyPoints;
 
-        public PlayerCharacterModel(int energyPoints, int healthPoints, int shieldPoints) 
-            : base (healthPoints, shieldPoints)
+        public PlayerCharacterModel(int energyPoints, int healthPoints, int shieldPoints, Action deathAction) 
+            : base (healthPoints, shieldPoints, deathAction)
         {
             _maxEnergyPoints = _energyPoints = energyPoints;
         }
@@ -28,7 +29,7 @@ namespace Game.Character
         {
             if (value < 0) DebugManager.Log(DebugCategory.Gameplay, $"{value} must be a positive value", DebugStatus.Error);
 
-            _energyPoints = Math.Max(0, _energyPoints + value);
+            _energyPoints = Math.Max(0, _energyPoints - value);
         }
     }
 }

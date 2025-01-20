@@ -1,5 +1,8 @@
 using config;
 using events;
+using Game.Character;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -151,6 +154,22 @@ public class CardWrapper : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerUp(PointerEventData eventData) {
         isDragged = false;
         container.OnCardDragEnd();
+        RaycastForCharacter(eventData);
         OnCardPointerUp?.Invoke();
+    }
+
+    private void RaycastForCharacter(PointerEventData eventData)
+    {
+        var raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+
+        var characterView = raycastResults
+            .Select(x => x.gameObject.GetComponentInParent<UICharacterView>())
+            .FirstOrDefault(view => view != null);
+
+        if (characterView != null && characterView.ActionCanvasGroup.blocksRaycasts)
+        {
+            characterView.OnActionPointerUp();
+        }
     }
 }

@@ -16,4 +16,4 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: a8d77f9f785bba242ab97bbafba33cc9, type: 3}
   value: 4
   cardName: Regeneration
-  energyNeeded: 1
+  energyNeeded: 2

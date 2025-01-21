@@ -11,6 +11,8 @@ namespace Game.Card
     {
         [SerializeField] private CharactersManager charactersManager;
 
+        [SerializeField] private TimingConfig timingConfig;
+
         [Space(10)]
         [SerializeField] private UIDeckView deckView;
 
@@ -27,6 +29,7 @@ namespace Game.Card
             {
                 { EventEnum.CombatPlayerTurnStarted, OnPlayerTurnStarted},
                 { EventEnum.CombatPlayerTurnEnded, OnPlayerTurnEnded},
+                { EventEnum.CombatFightEnded, OnFightEnded},
             });
         }
 
@@ -137,20 +140,28 @@ namespace Game.Card
         }
         private void OnPlayerTurnEnded()
         {
+            DiscardCards();
+        }
+        private void OnFightEnded()
+        {
+            DiscardCards();
+        }
+
+        private void DiscardCards()
+        {
             _deckModel.DiscardCards();
             deckView.ToggleCardsRaycast(false);
 
             if (_discardCardsCoroutine != null) StopCoroutine(_discardCardsCoroutine);
             _discardCardsCoroutine = StartCoroutine(DiscardCardsCoroutine());
         }
-
         private IEnumerator DrawCardsCoroutine()
         {
-            for (int i = 0; i < 5; i++)
+            while (deckView.HasFreeCardView())
             {
                 DrawCard();
              
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(timingConfig.DrawCardWait);
             }
 
             deckView.ToggleCardsRaycast(true);
@@ -162,7 +173,7 @@ namespace Game.Card
                 deckView.DiscardFreeCard();
                 deckView.SetDiscardPile(_deckModel.DiscardPileCardsCount);
 
-                yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(timingConfig.DiscardCardWait);
             }
         }
     }

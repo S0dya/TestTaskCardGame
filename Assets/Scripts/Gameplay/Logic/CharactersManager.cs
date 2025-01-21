@@ -13,6 +13,9 @@ namespace Game.Character
         [SerializeField] private PlayerCharacterInfo playerInfo;
 
         [Space(30)]
+        [SerializeField] private TimingConfig timingConfig;
+
+        [Space(10)]
         [SerializeField] private UIPlayerCharacterView playerView;
         [SerializeField] private UIEnemyCharacterView[] enemyViews;
 
@@ -30,18 +33,7 @@ namespace Game.Character
 
         private void Start()
         {
-            _playerModel = new PlayerCharacterModel(
-                playerInfo.EnergyPoints,
-                playerInfo.HealthPoints,
-                playerInfo.ShieldPoints,
-                OnPlayerDeath);
-
-            playerView.SetCharacter(
-                    playerInfo.CharacterName,
-                    playerInfo.Sprite,
-                    playerInfo.HealthPoints,
-                    playerInfo.ShieldPoints,
-                    playerInfo.EnergyPoints);
+            InitializePlayer();
         }
 
         public void InitActions(Action OnPointerUpActionPlayer, Action<int> OnPointerUpActionEnemy)
@@ -60,20 +52,7 @@ namespace Game.Character
         {
             for (int i = 0; i < enemyInfos.Length; i++)
             {
-                EnemyCharacterInfo enemyInfo = enemyInfos[i];
-
-                _enemyModels.Add(new EnemyCharacterModel(
-                    enemyInfo.HealthPoints,
-                    enemyInfo.ShieldPoints,
-                    enemyInfo.Strategy,
-                    i,
-                    OnEnemyDeath));
-
-                enemyViews[i].SetCharacter(
-                    enemyInfo.CharacterName,
-                    enemyInfo.Sprite,
-                    enemyInfo.HealthPoints,
-                    enemyInfo.ShieldPoints);
+                InitializeEnemy(enemyInfos[i], i);
             }
         }
 
@@ -82,12 +61,8 @@ namespace Game.Character
             switch (actionEffect)
             {
                 case ActionEffectEnum.DealDamage:
-                    foreach (var enemyView in enemyViews)
-                    {
-                        enemyView.ToggleAction(true);
-                    }
+                    foreach (var enemyView in enemyViews) enemyView.ToggleAction(true);
                     break;
-
                 case ActionEffectEnum.AddShield:
                 case ActionEffectEnum.RestoreHealth:
                     playerView.ToggleAction(true);
@@ -220,6 +195,39 @@ namespace Game.Character
             StartCoroutine(EnemiesTurnCoroutine());
         }
 
+        private void InitializePlayer()
+        {
+            _playerModel = new PlayerCharacterModel(
+                playerInfo.EnergyPoints,
+                playerInfo.HealthPoints,
+                playerInfo.ShieldPoints,
+                OnPlayerDeath);
+
+            playerView.SetCharacter(
+                playerInfo.CharacterName,
+                playerInfo.Sprite,
+                playerInfo.HealthPoints,
+                playerInfo.ShieldPoints,
+                playerInfo.EnergyPoints);
+        }
+
+        private void InitializeEnemy(EnemyCharacterInfo info, int index)
+        {
+            var enemyModel = new EnemyCharacterModel(
+                info.HealthPoints,
+                info.ShieldPoints,
+                info.Strategy,
+                index,
+                OnEnemyDeath);
+
+            _enemyModels.Add(enemyModel);
+            enemyViews[index].SetCharacter(
+                info.CharacterName,
+                info.Sprite,
+                info.HealthPoints,
+                info.ShieldPoints);
+        }
+
         private void SetEnemiesStrategies()
         {
             for (int i = 0; i < _enemyModels.Count; i++)
@@ -264,7 +272,7 @@ namespace Game.Character
 
                 enemyView.ResetAction();
 
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(timingConfig.EnemyActionWait);
             }
 
             Observer.OnHandleEvent(EventEnum.CombatEnemyTurnEnded);

@@ -12,6 +12,9 @@ namespace Game.Combat
         [SerializeField] private CharactersManager charactersManager;
 
         [Space(10)]
+        [SerializeField] private TimingConfig timingConfig;
+
+        [Space(10)]
         [SerializeField] private UICombatView combatView;
 
         private Coroutine _fightStartedCoroutine;
@@ -66,14 +69,14 @@ namespace Game.Combat
 
         private IEnumerator FightStartedCoroutine()
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(timingConfig.FightStartWait);
 
             Observer.OnHandleEvent(EventEnum.CombatPlayerTurnStarted);
         }
 
         private IEnumerator PlayerTurnEndedCoroutine()
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(timingConfig.PlayerTurnEndedWait);
 
             Observer.OnHandleEvent(EventEnum.CombatEnemyTurnStarted);
         }

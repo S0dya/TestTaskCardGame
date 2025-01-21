@@ -12,6 +12,9 @@ namespace Game
     {
         [Header("Test")]
         [SerializeField] private LevelInfo[] levelInfos;
+        
+        [Space(20)]
+        [SerializeField] private TimingConfig timingConfig;
 
         [Space(10)]
         [SerializeField] private CardsBundleInfo startingCardsBundle;
@@ -61,7 +64,7 @@ namespace Game
 
         private IEnumerator FightEndCoroutine()
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(timingConfig.FightEndWait);
 
             StartLevel();
 

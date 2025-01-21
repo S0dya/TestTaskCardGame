@@ -1,6 +1,4 @@
 using UnityEngine;
-using ObserverPattern;
-using System.Collections.Generic;
 
 namespace Game.Combat
 {

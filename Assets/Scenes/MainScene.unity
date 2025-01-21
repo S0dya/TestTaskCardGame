@@ -1121,6 +1121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charactersManager: {fileID: 1663285074}
+  timingConfig: {fileID: 11400000, guid: 56c0e3863c0f42a4e97c19f13404f7ae, type: 2}
   combatView: {fileID: 782410398}
 --- !u!1 &673832290
 GameObject:
@@ -1686,6 +1687,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charactersManager: {fileID: 1663285074}
+  timingConfig: {fileID: 11400000, guid: 56c0e3863c0f42a4e97c19f13404f7ae, type: 2}
   deckView: {fileID: 1553131905}
 --- !u!1 &931099943
 GameObject:
@@ -2244,6 +2246,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ef83d318a65d41f4e93413fd8b2deec9, type: 2}
   - {fileID: 11400000, guid: f47b3e59b435efa43b52bf6852f88ceb, type: 2}
   - {fileID: 11400000, guid: f08d17770d968d44fbc2f1d608ba9b5d, type: 2}
+  timingConfig: {fileID: 11400000, guid: 56c0e3863c0f42a4e97c19f13404f7ae, type: 2}
   startingCardsBundle: {fileID: 11400000, guid: 0a0ed02cab17dac44ba2032191a390dc, type: 2}
   combatManager: {fileID: 630147201}
   cardsManager: {fileID: 828914850}
@@ -2975,6 +2978,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerInfo: {fileID: 11400000, guid: 50c6ba4a36b66414eb4252ef42967212, type: 2}
+  timingConfig: {fileID: 11400000, guid: 56c0e3863c0f42a4e97c19f13404f7ae, type: 2}
   playerView: {fileID: 1676703954}
   enemyViews:
   - {fileID: 539658451}

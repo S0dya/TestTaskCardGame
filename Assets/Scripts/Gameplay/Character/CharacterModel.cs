@@ -28,11 +28,6 @@ namespace Game.Character
             _deathAction = deathAction;
         }
 
-        public virtual void OnTurnEnded()
-        {
-            //passives
-        }
-
         public void HitShield(int damage, out int afterShieldDamage)
         {
             if (damage < 0) DebugManager.Log(DebugCategory.Gameplay, $"{damage} must be a positive value", DebugStatus.Error);
@@ -64,6 +59,11 @@ namespace Game.Character
             if (value < 0) DebugManager.Log(DebugCategory.Gameplay, $"{value} must be a positive value", DebugStatus.Error);
 
             _healthPoints = Math.Min(_healthPoints + value, _maxHealthPoints);
+        }
+
+        public void ResetShield()
+        {
+            _shieldPoints = 0;
         }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Game/Level")]
 public class LevelInfo : ScriptableObject
 {
-    [SerializeField] private CharacterInfo[] enemyCharacters;
+    [SerializeField] private EnemyCharacterInfo[] enemyCharacters;
 
-    public CharacterInfo[] EnemyCharacters => enemyCharacters;
+    public EnemyCharacterInfo[] EnemyCharacters => enemyCharacters;
 }

@@ -152,6 +152,7 @@ public class CardWrapper : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
 
     public void OnPointerUp(PointerEventData eventData) {
+        isHovered = false;
         isDragged = false;
         container.OnCardDragEnd();
         RaycastForCharacter(eventData);

@@ -27,7 +27,7 @@ namespace Game.Card
 
         public int AddCard(string name, Sprite sprite, string description, string energyNeeded)
         {
-            int cardViewIndex = GetFreeCardViewIndex();
+            int cardViewIndex = GetCardViewIndex(false);
 
             cardViews[cardViewIndex].SetCard(name, sprite, description, energyNeeded);
             cardViews[cardViewIndex].MoveToParent(handCardsParent);
@@ -35,10 +35,23 @@ namespace Game.Card
             return cardViewIndex;
         }
 
-        public void RemoveCard(int index)
+        public void DiscardFreeCard()
+        {
+            DiscardCard(GetCardViewIndex(true));
+        }
+        public void DiscardCard(int index)
         {
             cardViews[index].ResetCard();
             cardViews[index].MoveToParent(pileCardsParent);
+            cardViews[index].MoveLocalPosition(Vector2.zero);
+        }
+
+        public void ToggleCardsRaycast(bool toggle)
+        {
+            foreach (var cardView in cardViews)
+            {
+                cardView.ToggleRaycast(toggle);
+            }
         }
 
         public void SetDrawPile(int value)
@@ -50,13 +63,14 @@ namespace Game.Card
             Helper.SetText(discardPileAmount, value.ToString());
         }
 
-        public bool HasFreeCardView() => GetFreeCardViewIndex() > -1;
+        public bool HasFreeCardView() => GetCardViewIndex(false) > -1;
+        public bool HasHandCardView() => GetCardViewIndex(true) > -1;
 
-        private int GetFreeCardViewIndex()
+        private int GetCardViewIndex(bool isSet)
         {
-            for (int i = 0; cardViews.Length > 0; i++)
+            for (int i = 0; i < cardViews.Length; i++)
             {
-                if (!cardViews[i].IsActive)
+                if (cardViews[i].IsActive == isSet)
                 {
                     return i;
                 }

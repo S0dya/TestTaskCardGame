@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1221f52291c745b4f9cc76f8f14d5617, type: 3}
-  m_Name: DefCard
+  m_Name: AttackCard
   m_EditorClassIdentifier: 
   actionEffectData:
-    actionEffect: 1
-    sprite: {fileID: 21300000, guid: 28107bacc6883d449a356a7a01686f14, type: 3}
-    value: 8
-  cardName: Defend
+    actionEffect: 2
+    sprite: {fileID: 21300000, guid: cdc26fc8ea56b4e4dbfcaa498deb7ca3, type: 3}
+    value: 5
+  cardName: Attack
   energyNeeded: 1

@@ -8,17 +8,13 @@ namespace Game.Card
     {
         public string CardName => _cardName;
         public int EnergyNeeded => _energyNeeded;
-        public ActionEffectEnum ActionEffect => _actionEffect;
-        public Sprite Sprite => _sprite;
-        public int Value => _value;
+        public ActionEffectData ActionEffectData => _actionEffectData;
 
         public int CardIndex => _cardIndex;
 
         private string _cardName;
         private int _energyNeeded;
-        private ActionEffectEnum _actionEffect;
-        private Sprite _sprite;
-        private int _value;
+        private ActionEffectData _actionEffectData;
 
         private int _cardIndex;
 
@@ -26,9 +22,7 @@ namespace Game.Card
         {
             _cardName = cardName;
             _energyNeeded = energyNeeded;
-            _actionEffect = actionEffect;
-            _sprite = sprite;
-            _value = value;
+            _actionEffectData = new ActionEffectData(actionEffect, sprite, value);
         }
 
         public void SetCardIndex(int cardIndex)

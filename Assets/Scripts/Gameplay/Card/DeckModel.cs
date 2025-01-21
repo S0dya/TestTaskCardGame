@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,12 @@ namespace Game.Card
         private List<CardModel> _handCards = new List<CardModel>();
         private List<CardModel> _discardPileCards = new List<CardModel>();
 
+        private Action _onDiscardCardsDrawwed;
+
+        public DeckModel(Action onDiscardCardsDrawwed)
+        {
+            _onDiscardCardsDrawwed = onDiscardCardsDrawwed;
+        }
 
         public void AddCardDraw(string cardName, int energyNeeded, ActionEffectEnum actionEffect, Sprite sprite, int value)
         {
@@ -25,12 +32,17 @@ namespace Game.Card
             _handCards.Add(card);
         }
 
+        public void DiscardCards()
+        {
+            while (_handCards.Count > 0)
+            {
+                DiscardCard(_handCards[0]);
+            }
+        }
         public void DiscardCard(CardModel card)
         {
-            if (_handCards.Remove(card))
-            {
-                _discardPileCards.Add(card);
-            }
+            _handCards.Remove(card);
+            _discardPileCards.Add(card);
         }
 
         public void ShuffleDrawPile()
@@ -68,6 +80,8 @@ namespace Game.Card
             _discardPileCards.Clear();
 
             ShuffleDrawPile();
+
+            _onDiscardCardsDrawwed.Invoke();
         }
     }
 }

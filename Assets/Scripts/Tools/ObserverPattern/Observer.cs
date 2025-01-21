@@ -8,6 +8,7 @@ public enum EventEnum
     CombatPlayerTurnEnded,
 
     CombatEnemyTurnStarted,
+    CombatEnemyTurnEnded,
 }
 
 namespace ObserverPattern

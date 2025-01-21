@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: TestLevel
   m_EditorClassIdentifier: 
   enemyCharacters:
-  - {fileID: 11400000, guid: eaabed7e473e9f3418f693a9915f02b5, type: 2}
+  - {fileID: 11400000, guid: 60b77a0c73af3df49bb89606a138007e, type: 2}
+  - {fileID: 11400000, guid: 6af719d46a9d49a4ab26418a28c9e5b3, type: 2}
+  - {fileID: 11400000, guid: 08e844dbafcaa4d458a5783547a08b93, type: 2}

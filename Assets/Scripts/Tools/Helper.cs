@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
-using UnityEngine.EventSystems;
+
 using Random = UnityEngine.Random;
 
 public static class Helper
@@ -17,18 +16,8 @@ public static class Helper
         }
     }
 
-    static public void SetText(TextMeshProUGUI tmp, string text)
+    public static void SetText(TextMeshProUGUI tmp, string text)
     {
         tmp.text = text;
-    }
-
-    static public void AddEventToEventTrigger(EventTrigger eventTrigger, Action action, EventTriggerType eventTriggerType)
-    {
-        var pointerUpEntry = new EventTrigger.Entry
-        {
-            eventID = eventTriggerType
-        };
-        pointerUpEntry.callback.AddListener(_ => action?.Invoke());
-        eventTrigger.triggers.Add(pointerUpEntry);
     }
 }

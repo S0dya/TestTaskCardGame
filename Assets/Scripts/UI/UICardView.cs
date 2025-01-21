@@ -10,6 +10,7 @@ namespace Game.Card
     public class UICardView : MonoBehaviour
     {
         [SerializeField] private GameObject mainObject;
+        [SerializeField] private CanvasGroup mainCanvasGroup;
 
         [Space(20)]
         [SerializeField] private TextMeshProUGUI cardName;
@@ -42,8 +43,18 @@ namespace Game.Card
             mainObject.transform.SetParent(parent);
         }
 
-        //public void ToggleEnergySatisfied(bool toggle)
+        public void MoveLocalPosition(Vector2 position)
+        {
+            mainObject.transform.localPosition = position;
+        }
 
-        private void ToggleCard(bool toggle) => mainObject.SetActive(toggle);
+        //public void ToggleEnergySatisfied(bool toggle)
+        public void ToggleRaycast(bool toggle) => mainCanvasGroup.blocksRaycasts = toggle;
+
+        private void ToggleCard(bool toggle)
+        {
+            mainObject.SetActive(toggle);
+            ToggleRaycast(toggle);
+        }
     }
 }

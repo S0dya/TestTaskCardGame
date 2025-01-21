@@ -18,18 +18,16 @@ namespace Game.Character
             _maxEnergyPoints = _energyPoints = energyPoints;
         }
 
-        public override void OnTurnEnded()
-        {
-            base.OnTurnEnded();
-
-            _energyPoints = _maxEnergyPoints;
-        }
-
         public void UseEnergy(int value)
         {
             if (value < 0) DebugManager.Log(DebugCategory.Gameplay, $"{value} must be a positive value", DebugStatus.Error);
 
             _energyPoints = Math.Max(0, _energyPoints - value);
+        }
+
+        public void ResetEnergy()
+        {
+            _energyPoints = _maxEnergyPoints;
         }
     }
 }

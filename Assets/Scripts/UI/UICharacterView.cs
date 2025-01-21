@@ -35,7 +35,7 @@ namespace Game.Character
 
         private Action _onPointerUpAction;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             mainObject.SetActive(false);
 
@@ -60,7 +60,7 @@ namespace Game.Character
 
             mainObject.SetActive(true);
         }
-        public void ResetCharacter()
+        public virtual void ResetCharacter()
         {
             mainObject.SetActive(false);
         }
@@ -85,9 +85,11 @@ namespace Game.Character
             {
                 shieldObject.SetActive(true);
             }
-            else if (prevValue > 0 && newValue == 0)
+            else if (newValue == 0)
             {
                 shieldObject.SetActive(false);
+
+                //if (prevValue > 0)
             }
 
             Helper.SetText(characterShieldPoints, newValue.ToString());

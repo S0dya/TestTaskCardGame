@@ -2,8 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-[CreateAssetMenu(menuName = "Game/Action Effect")]
-public class ActionEffectInfo : ScriptableObject
+public class ActionEffectData
 {
     [SerializeField] private ActionEffectEnum actionEffect;
     [SerializeField] private Sprite sprite;
@@ -12,4 +11,11 @@ public class ActionEffectInfo : ScriptableObject
     public ActionEffectEnum ActionEffect => actionEffect;
     public Sprite Sprite => sprite;
     public int Value => value;
+
+    public ActionEffectData(ActionEffectEnum actionEffect, Sprite sprite, int value)
+    {
+        this.actionEffect = actionEffect;
+        this.sprite = sprite;
+        this.value = value;
+    }
 }

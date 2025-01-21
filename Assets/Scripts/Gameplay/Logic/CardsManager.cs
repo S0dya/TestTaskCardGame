@@ -14,23 +14,27 @@ namespace Game.Card
         [Space(10)]
         [SerializeField] private UIDeckView deckView;
 
-        private DeckModel _deckModel = new DeckModel();
+        private DeckModel _deckModel;
 
         private int _currentDraggedCardIndex;
 
         private Coroutine _drawCardsCoroutine;
+        private Coroutine _discardCardsCoroutine;
 
         private void Awake()
         {
             AddEventActions(new Dictionary<EventEnum, Action>
             {
                 { EventEnum.CombatPlayerTurnStarted, OnPlayerTurnStarted},
+                { EventEnum.CombatPlayerTurnEnded, OnPlayerTurnEnded},
             });
         }
 
         private void Start()
         {
             charactersManager.InitActions(OnPointerUpActionPlayer, OnPointerUpActionEnemy);
+
+            _deckModel = new DeckModel(OnDiscardCardsDrawwed);
         }
 
         public void OnCardPointerDown(int i)
@@ -41,7 +45,7 @@ namespace Game.Card
 
             CardModel card = _deckModel.GetCard(_currentDraggedCardIndex);
 
-            charactersManager.EnableActionForCard(card.ActionEffect);
+            charactersManager.EnableActionForCard(card.ActionEffectData.ActionEffect);
         }
         public void OnCardPointerUp()
         {
@@ -57,9 +61,9 @@ namespace Game.Card
             _deckModel.AddCardDraw(
                 cardInfo.CardName,
                 cardInfo.EnergyNeeded,
-                cardInfo.ActionEffect,
-                cardInfo.Sprite,
-                cardInfo.Value);
+                cardInfo.ActionEffectData.ActionEffect,
+                cardInfo.ActionEffectData.Sprite,
+                cardInfo.ActionEffectData.Value);
 
 
             deckView.SetDrawPile(_deckModel.DrawPileCardsCount);
@@ -71,10 +75,12 @@ namespace Game.Card
             {
                 CardModel card = _deckModel.DrawCard();
 
+                var actionEffectData = card.ActionEffectData;
+
                 int cardIndex = deckView.AddCard(
                     card.CardName,
-                    card.Sprite,
-                    $"<color=yellow>{card.ActionEffect}</color> {card.Value}",
+                    actionEffectData.Sprite,
+                    $"<color=yellow>{actionEffectData.ActionEffect}</color> {actionEffectData.Value}",
                     card.EnergyNeeded.ToString());
 
                 _deckModel.AddCardHand(card, cardIndex);
@@ -85,27 +91,41 @@ namespace Game.Card
 
         private void OnPointerUpActionPlayer()
         {
-            CardModel card = _deckModel.GetCard(_currentDraggedCardIndex);
-
-            if (charactersManager.GetPlayerEnergy() < card.EnergyNeeded) return;
+            GetDraggedCard(out CardModel card);
+            if (card == null) return;
 
             DebugManager.Log(DebugCategory.UI, "used card on player");
 
-            _deckModel.DiscardCard(card);
-
-            charactersManager.UseCard(card.EnergyNeeded, card.ActionEffect, card.Value);
+            charactersManager.UseCard(card.EnergyNeeded, card.ActionEffectData.ActionEffect, card.ActionEffectData.Value);
         }
-        private void OnPointerUpActionEnemy(int i)//        CHANGE 
+        private void OnPointerUpActionEnemy(int i)
         {
-            CardModel card = _deckModel.GetCard(_currentDraggedCardIndex);
-
-            if (charactersManager.GetPlayerEnergy() < card.EnergyNeeded) return;
+            GetDraggedCard(out CardModel card);
+            if (card == null) return;
 
             DebugManager.Log(DebugCategory.UI, "used card on enemy");
 
-            _deckModel.DiscardCard(card);
+            charactersManager.UseCard(card.EnergyNeeded, card.ActionEffectData.ActionEffect, card.ActionEffectData.Value, i);
+        }
 
-            charactersManager.UseCard(card.EnergyNeeded, card.ActionEffect, card.Value, i);
+        private void GetDraggedCard(out CardModel card)
+        {
+            card = _deckModel.GetCard(_currentDraggedCardIndex);
+
+            if (charactersManager.GetPlayerEnergy() < card.EnergyNeeded) return;
+
+            _deckModel.DiscardCard(card);
+            deckView.SetDiscardPile(_deckModel.DiscardPileCardsCount);
+
+            deckView.DiscardCard(_currentDraggedCardIndex);
+        }
+
+        private void OnDiscardCardsDrawwed()
+        {
+            DebugManager.Log(DebugCategory.Points, "Took cards from discard");
+
+            deckView.SetDiscardPile(_deckModel.DiscardPileCardsCount);
+            deckView.SetDrawPile(_deckModel.DrawPileCardsCount);
         }
 
         private void OnPlayerTurnStarted()
@@ -115,6 +135,14 @@ namespace Game.Card
             if (_drawCardsCoroutine != null) StopCoroutine(_drawCardsCoroutine);
             _drawCardsCoroutine = StartCoroutine(DrawCardsCoroutine());
         }
+        private void OnPlayerTurnEnded()
+        {
+            _deckModel.DiscardCards();
+            deckView.ToggleCardsRaycast(false);
+
+            if (_discardCardsCoroutine != null) StopCoroutine(_discardCardsCoroutine);
+            _discardCardsCoroutine = StartCoroutine(DiscardCardsCoroutine());
+        }
 
         private IEnumerator DrawCardsCoroutine()
         {
@@ -122,6 +150,18 @@ namespace Game.Card
             {
                 DrawCard();
              
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            deckView.ToggleCardsRaycast(true);
+        }
+        private IEnumerator DiscardCardsCoroutine()
+        {
+            while (deckView.HasHandCardView())
+            {
+                deckView.DiscardFreeCard();
+                deckView.SetDiscardPile(_deckModel.DiscardPileCardsCount);
+
                 yield return new WaitForSeconds(0.05f);
             }
         }
